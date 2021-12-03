@@ -34,7 +34,14 @@ func init() {
 }
 
 func main() {
-	d, err := ioutil.ReadFile("README.md")
+	b := readFile("README.md")
+
+	execute("public/index.html", b)
+	fmt.Println("golang-design/history: A Documentary of Go")
+}
+
+func readFile(filename string) bytes.Buffer {
+	d, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatalf("Read: cannot read README.md, err: %v", err)
 	}
@@ -44,8 +51,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Convert: cannot convert README from markdown to html, err: %v", err)
 	}
+	return b
+}
 
-	f, err := os.Create("public/index.html")
+func execute(target string, b bytes.Buffer) {
+	f, err := os.Create(target)
 	if err != nil {
 		log.Fatalf("Create: cannot create index.html, err: %v", err)
 	}
@@ -73,7 +83,6 @@ func main() {
 		Navigation: template.HTML(toc),
 		Content:    template.HTML(dom),
 	})
-	fmt.Println("golang-design/history: A Documentary of Go")
 }
 
 const indexTemplate = `
@@ -96,7 +105,15 @@ const indexTemplate = `
 </head>
 <body>
 <div class="header row">
-    <div class="col-9"></div>
+	<div class="col-3 dark-switch">
+		<label>
+   			<select Onchange="window.open(this.options[this.selectedIndex].value,target='_self')">
+	 		<option selected value="index.html">English</option>
+	 		<option value="dark.js">简体中文</option>
+      		</select>
+		</label>
+    </div>
+    <div class="col-6"></div>
     <div class="col-3 dark-switch">
     <div class="custom-control custom-switch">
     <input type="checkbox" class="custom-control-input" id="darkSwitch" />
