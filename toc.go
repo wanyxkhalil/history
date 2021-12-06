@@ -7,18 +7,19 @@ import (
 	"net/url"
 )
 
-type I18nIDs struct {
+// HistoryIDs custom implementation of goldmark/parser.IDs
+type HistoryIDs struct {
 	values map[string]bool
 }
 
-func newIDs() *I18nIDs {
-	return &I18nIDs{
+func newIDs() *HistoryIDs {
+	return &HistoryIDs{
 		values: map[string]bool{},
 	}
 }
 
-// Generate generates a new element id.
-func (s *I18nIDs) Generate(value []byte, kind ast.NodeKind) []byte {
+// Generate generates a new element id by encode the title
+func (s *HistoryIDs) Generate(value []byte, _ ast.NodeKind) []byte {
 	value = util.TrimLeftSpace(value)
 	value = util.TrimRightSpace(value)
 	result := []byte(url.QueryEscape(string(value)))
@@ -36,6 +37,6 @@ func (s *I18nIDs) Generate(value []byte, kind ast.NodeKind) []byte {
 }
 
 // Put puts a given element id to the used ids table.
-func (s *I18nIDs) Put(value []byte) {
+func (s *HistoryIDs) Put(value []byte) {
 	s.values[util.BytesToReadOnlyString(value)] = true
 }

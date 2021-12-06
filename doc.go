@@ -45,16 +45,17 @@ func init() {
 }
 
 func main() {
-	index := readFile("README.md")
-	cn := readFile("README_zh-Hans.md", parser.WithContext(pctx))
+	index := convertMD("README.md")
+	parseTemplate("en", "index", index)
 
-	execute("en", "index", index)
-	execute("zh-Hans", "zh-Hans", cn)
+	cn := convertMD("README_zh-Hans.md", parser.WithContext(pctx))
+	parseTemplate("zh-Hans", "zh-Hans", cn)
 
 	fmt.Println("golang-design/history: A Documentary of Go")
 }
 
-func readFile(filename string, opts ...parser.ParseOption) bytes.Buffer {
+// convertMD convert md to html
+func convertMD(filename string, opts ...parser.ParseOption) bytes.Buffer {
 	d, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatalf("Read: cannot read README.md, err: %v", err)
@@ -68,7 +69,8 @@ func readFile(filename string, opts ...parser.ParseOption) bytes.Buffer {
 	return b
 }
 
-func execute(lang, target string, b bytes.Buffer) {
+// parseTemplate Add md data to the template
+func parseTemplate(lang, target string, b bytes.Buffer) {
 	f, err := os.Create("public/" + target + ".html")
 	if err != nil {
 		log.Fatalf("Create: cannot create index.html, err: %v", err)
