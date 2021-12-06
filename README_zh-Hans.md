@@ -1,11 +1,77 @@
+# Go 语言历史
+
+
 > 英文原版：[https://golang.design/history/](https://golang.design/history/)，来自 Changkun Ou 及其他贡献者
 
 > 此翻译文档可能更新不即使，您可以查看英文原版获得最新更新。
 
-​
 
 此文档收集了Go语言开发过程中公开的讨论及提案，以全面地展现Go语言发展历史。
 
+
+
+**Table of Contents**
+
+* [Go 语言历史](#Go+%E8%AF%AD%E8%A8%80%E5%8E%86%E5%8F%B2)
+  * [免责声明](#%E5%85%8D%E8%B4%A3%E5%A3%B0%E6%98%8E)
+  * [资料来源](#%E8%B5%84%E6%96%99%E6%9D%A5%E6%BA%90)
+  * [起源](#%E8%B5%B7%E6%BA%90)
+  * [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85)
+    * [核心作者](#%E6%A0%B8%E5%BF%83%E4%BD%9C%E8%80%85)
+    * [编译运行时团队](#%E7%BC%96%E8%AF%91%E8%BF%90%E8%A1%8C%E6%97%B6%E5%9B%A2%E9%98%9F)
+    * [小组会谈](#%E5%B0%8F%E7%BB%84%E4%BC%9A%E8%B0%88)
+  * [时间线](#%E6%97%B6%E9%97%B4%E7%BA%BF)
+  * [语言设计](#%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1)
+    * [Misc](#Misc)
+    * [切片 (1.2)](#%E5%88%87%E7%89%87+%281.2%29)
+    * [包管理 (1.4, 1.5, 1.7)](#%E5%8C%85%E7%AE%A1%E7%90%86+%281.4%2C+1.5%2C+1.7%29)
+    * [类型别名 (1.9)](#%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D+%281.9%29)
+    * [Defer (1.14)](#Defer+%281.14%29)
+    * [错误值 (1.13)](#%E9%94%99%E8%AF%AF%E5%80%BC+%281.13%29)
+    * [通道、选择器](#%E9%80%9A%E9%81%93%E3%80%81%E9%80%89%E6%8B%A9%E5%99%A8)
+    * [泛型](#%E6%B3%9B%E5%9E%8B)
+  * [编译工具链](#%E7%BC%96%E8%AF%91%E5%B7%A5%E5%85%B7%E9%93%BE)
+    * [编译](#%E7%BC%96%E8%AF%91)
+    * [连接器](#%E8%BF%9E%E6%8E%A5%E5%99%A8)
+    * [调试器](#%E8%B0%83%E8%AF%95%E5%99%A8)
+    * [竞争检测器](#%E7%AB%9E%E4%BA%89%E6%A3%80%E6%B5%8B%E5%99%A8)
+    * [跟踪器](#%E8%B7%9F%E8%B8%AA%E5%99%A8)
+    * [锁分析](#%E9%94%81%E5%88%86%E6%9E%90)
+    * [构建](#%E6%9E%84%E5%BB%BA)
+    * [模块](#%E6%A8%A1%E5%9D%97)
+    * [gopls](#gopls)
+    * [测试，x/perf](#%E6%B5%8B%E8%AF%95%EF%BC%8Cx%2Fperf)
+  * [运行时核心](#%E8%BF%90%E8%A1%8C%E6%97%B6%E6%A0%B8%E5%BF%83)
+    * [调度器](#%E8%B0%83%E5%BA%A6%E5%99%A8)
+    * [执行栈](#%E6%89%A7%E8%A1%8C%E6%A0%88)
+    * [内存分配器](#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8)
+    * [垃圾收集器](#%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8)
+    * [统计](#%E7%BB%9F%E8%AE%A1)
+    * [内存模型](#%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B)
+    * [ABI](#ABI)
+    * [Misc](#Misc)
+  * [标准库](#%E6%A0%87%E5%87%86%E5%BA%93)
+    * [syscall](#syscall)
+    * [os, io, io/fs, embed](#os%2C+io%2C+io%2Ffs%2C+embed)
+    * [go/*](#go%2F%2A)
+    * [sync](#sync)
+      * [Map](#Map)
+      * [Pool](#Pool)
+      * [Mutex, RWMutex](#Mutex%2C+RWMutex)
+      * [Groups](#Groups)
+      * [atomic](#atomic)
+    * [time](#time)
+    * [context](#context)
+    * [encoding](#encoding)
+    * [image, x/image](#image%2C+x%2Fimage)
+    * [Mobile](#Mobile)
+    * [misc](#misc)
+  * [未分类但相关的链接](#%E6%9C%AA%E5%88%86%E7%B1%BB%E4%BD%86%E7%9B%B8%E5%85%B3%E7%9A%84%E9%93%BE%E6%8E%A5)
+  * [有趣的事实](#%E6%9C%89%E8%B6%A3%E7%9A%84%E4%BA%8B%E5%AE%9E)
+  * [鸣谢](#%E9%B8%A3%E8%B0%A2)
+  * [凭证](#%E5%87%AD%E8%AF%81)
+
+---
 
 ## 免责声明
 
@@ -14,7 +80,7 @@
 - 非常欢迎关于新内容、错误修复、拼写修复的合并请求
 - 使用 Github Issue 进行讨论
 
-​
+
 
 ## 资料来源
 有很多探索Go历史设计的平台，以下是这些平台的官方网站：
@@ -32,14 +98,14 @@
 - [groups.google.com/g/golang-dev](https://groups.google.com/g/golang-dev)
 - [groups.google.com/g/golang-tools](https://groups.google.com/g/golang-tools)
 
-​
+
 
 ## 起源
 Go 是由一个小组织以及语言社区的用户推动的。以下是一些核心贡献者，你可能会对他们杰出的工作感兴趣。
-​
+
 
 Go 的起源很吸引人。通过这些人举办的讲座，您可以了解到相关的口述历史和有趣的故事。
-​
+
 
 例如，您可以选择这些有关 Go 历史壮举的讲座作为起点（仅建议）：talk/rob2007, talk/rob2009, talk/rob2010b, talk/rob2010d, talk/rob2011a, talk/rob2013a, talk/rob2019, talk/robert2015, talk/russ2014, steve2019b, etc.
 > YouTube 视频。
@@ -49,7 +115,7 @@ Go 的起源很吸引人。通过这些人举办的讲座，您可以了解到�
 ## 贡献者
 ### 核心作者
 Go 最初由 Rob, Robert 和 Ken 创建。Rob 跟 Robert 谈论 C++ 缓慢的编译时间， 而 Ken 刚好在隔壁办公室。之后 Ian 因为兴趣加入了这个项目，编写了 [gccgo](https://github.com/golang/gofrontend)。Rob 和 Ken 退休后，Robert 和 Ian 目前为 Go 添加通用方法。Russ 也是早期的核心贡献者，那时候他是谷歌的新人，Rob 从 [Plan 9](https://9p.io/plan9/) 项目回来的路上认识了他，邀请他加入 Go 团队。Russ 做了很多基础工作，包括早期的 Go 编译器、运行时以及 Go 1.5 启动时的巨大提升。Russ 现在是 Go 团队的技术领导。
-​
+
 
 
 - Rob Pike. (Robert C. Pike 科学硕士) [Website](http://herpolhode.com/rob/), [Blog](https://commandcenter.blogspot.com/), [GitHub](https://github.com/robpike), [Twitter](https://twitter.com/rob_pike), [Reddit](https://www.reddit.com/user/robpike).（退休）
@@ -84,7 +150,7 @@ Go 最初由 Rob, Robert 和 Ken 创建。Rob 跟 Robert 谈论 C++ 缓慢的编
    - [talk/rob2020](https://evrone.com/rob-pike-interview) 一次 Rob Pike 采访。2020年。
    - [talk/rob2021](https://www.youtube.com/watch?v=YXV7sa4oM4I) Go 编程语言和环境。John Lions 卓越的演讲，新南威尔士大学。2021年3月27日。
 
-​
+
 
 
 - Robert Griesemer（博士）[GitHub](https://github.com/griesemer), [Twitter](https://twitter.com/robertgriesemer?lang=en)
@@ -102,7 +168,7 @@ Go 最初由 Rob, Robert 和 Ken 创建。Rob 跟 Robert 谈论 C++ 缓慢的编
    - [talk/robert2020a](https://changelog.com/gotime/140) 泛型最终版：Robert Griesemer 和 Ian Lance Taylor。2020年1月21日。
    - [talk/robert2020b](https://www.gophercon.com/agenda/session/233094) 编写 Go（通用）。2020年11月11日。
 
-​
+
 
 
 - Ken Thompson（Kenneth Lane Thompson 科学硕士）（退休）
@@ -115,7 +181,7 @@ Go 最初由 Rob, Robert 和 Ken 创建。Rob 跟 Robert 谈论 C++ 缓慢的编
    - [talk/ken2019a](https://www.youtube.com/watch?v=g3jOJfrOknA) Thompson 和 Ritchie 的故事。2019年2月18日。
    - [talk/ken2019b](https://www.youtube.com/watch?v=EY6q5dv_B-o) Brian Kernighan 采访 Ken Thompson。2019年VCF East，2019年3月4日。
 
-​
+
 
 
 - Ian Taylor（Ian Lance Taylor 学士） [Website](https://www.airs.com/ian/), [GitHub](https://github.com/ianlancetaylor), [Quora](https://www.quora.com/profile/Ian-Lance-Taylor)
@@ -126,7 +192,7 @@ Go 最初由 Rob, Robert 和 Ken 创建。Rob 跟 Robert 谈论 C++ 缓慢的编
    - [talk/ian2019b](https://changelog.com/gotime/98) Go 的泛型。2019年8月27日。
    - [talk/ian2020](https://www.youtube.com/watch?v=yoZ05GG8aLs) Go 语言与 Ian Lance Taylor。CppCast，2020年8月9日。
 
-​
+
 
 
 - Russ Cox（Russell Stensby Cox 博士） [Website](https://swtch.com/~rsc/), [Blog](https://research.swtch.com/), [GitHub](https://github.com/rsc), [Twitter](https://twitter.com/_rsc), [Reddit](https://old.reddit.com/user/rsc)
@@ -148,11 +214,11 @@ Go 最初由 Rob, Robert 和 Ken 创建。Rob 跟 Robert 谈论 C++ 缓慢的编
    - [talk/russ2020b](https://golang.org/s/draft-iofs-video) os/fs 包设计草稿。2020年7月21日。
    - [talk/russ2020c](https://golang.org/s/draft-embed-video) //go:embed 包设计草稿。2020年7月21日。
 
-​
+
 
 ### 编译运行时团队
 Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可伸缩的 goroutine 调度器，很多的性能提升，早期的同步，race 检测，Go 运行时阻塞分析器。Austin 在攻读博士期间是谷歌的实习生，在 Go 项目早期工作。后来，在他结束学生生涯后加入了 Go 团队，和 Rick 一起从事 Go 并发 GC 工作。他也在做抢占式调度器和链接器的工作。他现在是 Go 语言编译运行时团队的领导人。Keith 和 David 一起专注于 Go 编译器后端，尤其是当前的 SSA 后端。Michael 是 Go 团队的新成员，他的主要工作是运行时内存系统，例如内存分配器的重构和运行时指标。
-​
+
 
 
 - Dmitry Vyukov（Дмитрий Вьюков 理学硕士）[Website](http://www.1024cores.net/), [GitHub](https://github.com/dvyukov), [Twitter](https://twitter.com/dvyukov)
@@ -167,7 +233,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
    - [talk/dmitry2019](https://www.youtube.com/watch?v=-K11rY57K7k) Go 调度器：以轻量级并发实现编程语言。2019年10月14日。
    - [talk/dmitry2020](https://www.youtube.com/watch?v=YwX4UyXnhz0) syzkaller：连续覆盖引导内核模糊器。2020年BlueHat IL。2020年2月13日。
 
-​
+
 
 
 - Austin Clements（Austin T. Clements 博士）[GitHub](https://github.com/aclements), [Scholar](https://scholar.google.com/citations?user=MKDtxN4AAAAJ)
@@ -175,7 +241,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
    - [paper/autin2014](https://pdos.csail.mit.edu/papers/aclements-phd.pdf) 可伸缩交换规则：为多核处理器设计可伸缩软件。博士论文。
    - [talk/austin2020](https://www.gophercon.com/agenda/session/233441) 原谅中断：Go 1.14 中的循环抢占。2020年11月12日。
 
-​
+
 
 
 - Richard Hudson（Richard L. Hudson 理学硕士）[GitHub](https://github.com/RLH)（退休）
@@ -184,7 +250,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
    - [talk/rick2015](https://www.youtube.com/watch?v=aiv1JOfMjm0) Go 垃圾回收：解决延迟问题。2015年 GopherCon，2015年7月8日。
    - [talk/rick2015b](https://www.infoq.com/interviews/hudson-go-gc/) Go 垃圾回收：Rick Hudson。2015年12月21日
 
-​
+
 
 
 - Keith Randall（Keith H. Randall 博士）[GitHub](https://github.com/randall77)
@@ -193,7 +259,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
    - [talk/keith2016](https://www.youtube.com/watch?v=Tl7mi9QmLns) Map 内部实现。2016年 GopherCon，2016年7月12日。
    - [talk/keith2017](https://www.youtube.com/watch?v=uTMvKVma5ms) 用 SSA 生成更好的机器码。2017年 GopherCon，2017年7月24日。
 
-​
+
 
 
 - David Chase（David Chase 博士）[Website](http://chasewoerner.org/resume.html), [Block](https://dr2chase.wordpress.com/), [GitHub](https://github.com/dr2chase), [Twitter](https://twitter.com/dr2chase), [Scholar](https://dblp.org/pid/51/3488.html)
@@ -206,13 +272,13 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
 - Dan Scales.
    - [talk/dan2020](https://www.gophercon.com/agenda/session/233397) 实现更快的 defer。2020年11月11日。
 
-​
+
 
 
 - Michael Knyszek. [Website](https://www.ocf.berkeley.edu/~mknyszek/), [GitHub](https://github.com/mknyszek)
    - [talk/michael2020](https://www.gophercon.com/agenda/session/233086) 提升 Go 内存管理器的 RAM 和 CPU 效率。
 
-​
+
 
 
 - Than McIntosh. [GitHub](https://github.com/thanm)
@@ -221,7 +287,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
 
 - Cherry Zhang. [GitHub](https://github.com/cherrymui)
 
-​
+
 
 仓库、工具、安全、社区
 
@@ -254,32 +320,32 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
    - [talk/brad2018c](https://www.youtube.com/watch?v=69Zy77O-BUM) 快速谈话：核选项，`go test -run=InQemu`。2018年 GopherCon，2018年11月11日。
    - [talk/brad2019](https://www.youtube.com/watch?v=BRSam0xQJKY) Brad Fitzpatrick 更喜欢Go，而非 C, C++, Rust, Perl, Python, Ruby, JavaScript 和 Java。2019年11月28日。
 
-​
+
 
 
 - Bryan C. Mills. [GitHub](https://github.com/bcmills)
    - [talk/bryan2017](https://www.youtube.com/watch?v=C1EtfDnsdDs) 快速谈话：sync.Map 的概述。2017年 GopherCon，2017年7月24日。
    - [talk/bryan2018](https://www.youtube.com/watch?v=5zXAHh5tJqQ) 重新思考经典的并发模式。2018年 GopherCon，2018年9月14日。
 
-​
+
 
 
 - Steve Francia. [Website](https://spf13.com/), [GitHub](https://github.com/spf13), [Twitter](https://twitter.com/spf13).
    - [talk/steve2019a](https://spf13.com/presentation/what-should-a-modern-practical-programming-language-look-like/) 现代实用编程语言应该是什么样子。Langding Festival，2019年4月4日
    - [talk/steve2019b](https://spf13.com/presentation/the-legacy-of-go/) Go 的遗产。Go Lab，2019年10月22日。
 
-​
+
 
 
 - Jonathan Amsterdam.
    - [talk/jonathan2020](https://www.gophercon.com/agenda/session/233432) Errors 方面。2020年11月13日。
 
-​
+
 
 
 - Daniel Martí. [Website](https://mvdan.cc/), [GitHub](https://github.com/mvdan), [Twitter](https://twitter.com/mvdan_)
 
-​
+
 
 
 - Nigel Tao. [GitHub](https://github.com/nigeltao), Twitter
@@ -312,10 +378,10 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
    - [talk/filo2018](https://speakerdeck.com/filosottile/why-cgo-is-slow-at-capitalgo-2018) 为什么 cgo 太慢。2018年 CapitalGo。
    - [talk/speakerdeck](https://speakerdeck.com/filosottile?page=1)
 
-​
+
 
 更多人和谈话应该被添加……
-​
+
 
 ### 小组会谈
 
@@ -326,7 +392,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
 - [talk/goteam2020a](https://www.youtube.com/watch?v=gJxvkOHpTSM) 2020年 GoLab：Go 团队问答。2020年10月22日。
 - [talk/goteam2020b](https://www.youtube.com/watch?v=BNHwHLNLjLs) 2020年 GopherCon：Go 团队问答。2020年11月16日。
 
-​
+
 
 ## 时间线
 时间线能帮助你确定关联到 Go 版本文档。
@@ -357,7 +423,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
 - [doc/go1prerelease](https://golang.org/doc/devel/pre_go1.html) Go 1 预发布历史
 - [doc/go0release](https://golang.org/doc/devel/weekly.html) 每周发布历史（Go 1 之前）
 
-​
+
 
 ## 语言设计
 ### Misc
@@ -390,7 +456,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
 - [issue/19367](https://golang.org/issue/19367) unsafe：添加 `Slice(ptr *T, len anyIntegerType) []T`
 - [issue/40481](https://golang.org/issue/40481) unsafe：添加函数
 
-​
+
 
 ### 切片 (1.2)
 
@@ -403,7 +469,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
 - [cl/347917](https://golang.org/cl/347917) 运行时：让切片增长公式更平滑。
    - [doc/cl-347917-graph](https://docs.google.com/document/d/1JQvV6vyAYdHhIboY-zAwK06OXZjxHrUhOFeG38MuJ94/edit?resourcekey=0-L5OsHqwZZBxvjfK0dwsyVQ) CL 347917 图表
 
-​
+
 
 ### 包管理 (1.4, 1.5, 1.7)
 
@@ -414,7 +480,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
 - [design/go17binarypkg](https://golang.org/design/2775-binary-only-packages) Russ Cox，提案：纯二进制包，2016年4月24日。
    - [issue/2775](https://golang.org/issue/2775) cmd/go：当二进制可用但源文件丢失。
 
-​
+
 
 ### 类型别名 (1.9)
 
@@ -425,7 +491,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
 - [talk/refactor-video](https://www.youtube.com/watch?v=h6Cw9iCDVcU) Russ Cox，重构代码库（在 Go 的帮助下）。2016年 GothamGo，2016年11月18日。
    - [doc/refactor](https://talks.golang.org/2016/refactor.article) Russ Cox，重构代码库（在 Go 的帮助下）。
 
-​
+
 
 ### Defer (1.14)
 
@@ -439,7 +505,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
    - [issue/34530](https://golang.org/issue/34530) 规范：澄清何时调用 recover 停止 panic 
    - [cl/189377](https://golang.org/cl/189377) 规范：列举 recover 行为和递归 panic 的详情。 
 
-​
+
 
 ### 错误值 (1.13)
 
@@ -467,7 +533,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
 - [issue/40776](https://golang.org/issue/40776) 提案：动态错误忽略的检测器
 - [issue/41198](https://golang.org/issue/41198) 提案：errors：添加 ErrUnimplemented 作为失败接口方法的标准方式。
 
-​
+
 
 ### 通道、选择器
 
@@ -484,7 +550,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
 - [issue/40641](https://golang.org/issue/40641) 运行时，在堆栈收缩和通道发送/接受之间的竞争导致错误的 sudog 值
 - [issue/37350](https://golang.org/issue/37350) 反射：如果数组长度大于 1<< 16，请 panic
 
-​
+
 
 ### 泛型
 
@@ -527,7 +593,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
    - [discuss/47330](https://github.com/golang/go/discussions/47330) 提案：maps：提供泛型 map 函数的新包（讨论）
    - [issue/47657](https://golang.org/issue/47657) 提案：sync，sync/atomic：添加 PoolOf, MapOf, ValueOf
 
-​
+
 
 ## 编译工具链
 ### 编译
@@ -566,7 +632,7 @@ Dmitry 来自谷歌动态测试工具团队而不是 Go 团队。他编写了可
 - [talk/gccgo](https://www.youtube.com/watch?v=U0w9eFunkX4) gccgo 的简要概述，“另一个” Go 编译器。2015年8月6日。
 - [issue/28262](https://golang.org/issue/28262) cmd/compile：反馈导向优化
 
-​
+
 
 ### 连接器
 Ken Thompson 编写了 Go 连接器，Russ 在 Go 1.3 中进行了一些大修。Austin 和 keith, Than, Cheery 和其他人一起对连接器返工，将在 Go 1.15 和 Go 1.16 中发布
@@ -574,7 +640,7 @@ Ken Thompson 编写了 Go 连接器，Russ 在 Go 1.3 中进行了一些大修�
 
 - [design/go116linker](https://golang.org/s/better-linker) Austin Clements，构建更好的 Go 连接器，2019年9月12日。
 
-​
+
 
 ### 调试器
 
@@ -586,20 +652,20 @@ Ken Thompson 编写了 Go 连接器，Russ 在 Go 1.3 中进行了一些大修�
 - [design/profiler-labels](https://golang.org/design/17280-profile-labels) Michael Matloob，提案：支持 pprof 探查器标签，2017年3月15日。
    - [issue/17280](https://golang.org/issue/17280) pprof：添加探查器标签支持
 
-​
+
 
 ### 竞争检测器
 
 - [issue/42598](https://golang.org/issue/42598) runtime: apparent false-positive race report for a buffered channel after CL 220419
 
-​
+
 
 ### 跟踪器
 
 - [design/go15trace](https://golang.org/s/go15trace) Dmitry Vyukov，Go 执行跟踪器，2014年10月。
 - [design/tracefmt](https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview#heading=h.yr4qxyxotyw) nduca@, dsinclair@，跟踪事件格式，2016年10月。
 
-​
+
 
 ### 锁分析
 
@@ -616,7 +682,7 @@ Ken Thompson 编写了 Go 连接器，Russ 在 Go 1.3 中进行了一些大修�
    - [cl/236137](https://golang.org/cl/236137) 运行时：为锁排名3个新的 partial orders
 - [issue/40677](https://golang.org/issue/40677) 运行时：锁保持检查
 
-​
+
 
 ### 构建
 
@@ -637,7 +703,7 @@ Ken Thompson 编写了 Go 连接器，Russ 在 Go 1.3 中进行了一些大修�
 - [design/wasm](https://docs.google.com/document/d/131vjr4DH6JFnb-blm_uRdaC0_Nv3OUwjEY5qVCxCup4/edit#heading=h.mjo1bish3xni) Richard Musiol，Go WebAssembly 的架构。2018年2月28日。
 - [design/wasm2](https://docs.google.com/document/d/1GRmy3rA4DiYtBlX-I1Jr_iHykbX8EixC3Mq0TCYqbKc/edit#heading=h.q4c21ihutzk0) WebAssembly 程序文件
 
-​
+
 
 ### 模块
 
@@ -663,13 +729,13 @@ Ken Thompson 编写了 Go 连接器，Russ 在 Go 1.3 中进行了一些大修�
 - [issue/45713](https://go.dev/issue/45713) 提案：cmd/go: 添加工作区模式
    - [design/workspace](https://go.dev/design/45713-workspace) 提案：cmd/go 多模块工作区
 
-​
+
 
 ### gopls
 
 - [design/gopls-workspace](https://go.dev/design/37720-gopls-workspaces) Heschi Kreinick, Rebecca Stambler，提案：多项目 gopls 工作区，2020年3月9日。
 
-​
+
 
 ### 测试，x/perf
 
@@ -689,7 +755,7 @@ Ken Thompson 编写了 Go 连接器，Russ 在 Go 1.3 中进行了一些大修�
 - [issue/48803](https://go.dev/issue/48803) 所有：Go 编译/运行时性能监控系统。
 - [issue/49121](https://go.dev/issue/49121) x/perf/storage：支持 postgresql。
 
-​
+
 
 ## 运行时核心
 ### 调度器
@@ -718,7 +784,7 @@ Ken Thompson 编写了 Go 连接器，Russ 在 Go 1.3 中进行了一些大修�
 - [issue/32113](https://go.dev/issue/32113) 运行时：减少P流失的优化。
 - [issue/44313](https://go.dev/issue/44313) 运行时：已停止的Ms不能成为专用或小数的GC工作者。
 
-​
+
 
 ### 执行栈
 
@@ -730,7 +796,7 @@ Ken Thompson 编写了 Go 连接器，Russ 在 Go 1.3 中进行了一些大修�
    - [cl/345889](https://go.dev/cl/345889) 运行时：测量堆栈使用情况；需要的话就启动更大的堆栈
 - [issue/26061](https://go.dev/issue/26061) 运行时：g0 stack.lo 有时太慢
 
-​
+
 
 ### 内存分配器
 Go 内存分配的实力简述：Russ Cox 在 Go 1 上首次实现了基于 tcmallor 的内存分配器，mcache 缓存在 M 上。然后他修改了分配器，允许使用 16GB 的内存，后来到了128GB。然而，分配器（包括收集器）有很严重的锁竞争，且不可伸缩。在 Dmitry 的可伸缩运行时调度器后，分配器可以直接从P锁竞争中分配（更少）。同时，收集器从独立线程迁移到系统监视器线程。现在，Michael 正致力于提高内存分配器的可伸缩性，例如将收集器迁移到用户线程，基于位图的页分配器，可伸缩的 mcentral。
@@ -770,7 +836,7 @@ Go 内存分配的实力简述：Russ Cox 在 Go 1 上首次实现了基于 tcma
 - [issue/42330](https://go.dev/issue/42330) 运行时：在 Linux 上默认为 MADV_DONTNEED
    - [cl/267100](https://go.dev/cl/267100) 运行时：在 Linux 上默认为 MADV_DONTNEED
 
-​
+
 
 ### 垃圾收集器
 
@@ -822,7 +888,7 @@ Go 内存分配的实力简述：Russ Cox 在 Go 1 上首次实现了基于 tcma
 - [issue/45894](https://go.dev/issue/45894) 运行时：标记终止重启突变太慢。
 - [issue/45315](https://go.dev/issue/45315) 运行时：runtime.GC 无需完成扫描就能返回。
 
-​
+
 
 ### 统计
 
@@ -833,7 +899,7 @@ Go 内存分配的实力简述：Russ Cox 在 Go 1 上首次实现了基于 tcma
 - [issue/38712](https://go.dev/issue/38712) 运行时：TestMemStats 很奇怪
 - [issue/40459](https://go.dev/issue/40459) 运行时：在循环中调用 ReadMemStats 可能阻止GC
 
-​
+
 
 ### 内存模型
 Go内存模型包含以下方面：
@@ -863,7 +929,7 @@ Go内存模型包含以下方面：
    - [doc/gomm](https://research.swtch.com/gomm) Russ Cox，更新Go内存模型。2021年7月12日。
    - [discuss/47141](https://github.com/golang/go/discussions/47141) 更新Go内存模型。
 
-​
+
 
 ### ABI
 
@@ -882,14 +948,14 @@ Go内存模型包含以下方面：
 
 - [issue/20135](https://go.dev/issue/20135) 运行时：删除元素时map收缩。
 
-​
+
 
 ## 标准库
 ### syscall
 
 - [design/go14syscall](https://go.dev/s/go1.4-syscall) syscal 包。
 
-​
+
 
 ### os, io, io/fs, embed
 Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
@@ -915,7 +981,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
    - [issue/44166](https://go.dev/issue/44166) io/fs,os: 使用 os.DirFS 的 fs.ReadDir 会造成错误的路径
    - [issue/42322](https://go.dev/issue/42322) io/fs: 添加函数 `Sub(fsys FS, dir string) FS`
 
-​
+
 
 ### go/*
 
@@ -924,7 +990,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
 - [design/modular-interface](https://docs.google.com/document/d/1-azPLXaLgTCKeKDNg0HVMq2ovMlD-e7n1ZHzZVzOlJk/edit) Alan Donovan. 提案：用于Go模块化静态分析的通用接口。2018年9月9日。
    - [cl/134935](https://go.dev/cl/134935) go/analysis: 分析工具的新的应用接口
 
-​
+
 
 ### sync
 
@@ -932,7 +998,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
    - [issue/18802](https://go.dev/issue/18802) 提案：sync: 支持分片值
 - [issue/37142](https://go.dev/issue/37142) sync: sync 包里的收缩类型
 
-​
+
 
 #### Map
 
@@ -941,7 +1007,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
 - [issue/21035](https://go.dev/issue/21035) sync: 通过新的不相交的键来减少Map操作间的竞争
 - [issue/37033](https://go.dev/issue/37033) 运行时：提供集中的工具来管理 go/cgo 的指针句柄
 
-​
+
 
 #### Pool
 
@@ -957,7 +1023,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
    - [cl/166961](https://github.com/golang/go/commit/2dcbf8b3691e72d1b04e9376488cef3b6f93b286) sync: 使用受害者缓存在GC上进行平缓的池操作。
 - [issue/24479](https://go.dev/issue/24479) sync: 在池操作里去除全部 Mutex。
 
-​
+
 
 #### Mutex, RWMutex
 
@@ -968,7 +1034,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
 - [issue/17973](https://go.dev/issue/17973) sync: RWMutex 无法随 CPU 数量扩展。
    - [cl/215361](https://go.dev/cl/215361) sync: 实现能够避免缓存竞争的 RWMutex 版本。
 
-​
+
 
 #### Groups
 
@@ -977,7 +1043,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
    - [issue/15758](https://go.dev/issue/15758) testing: 同时使用 T.FatalX 和 T.SkipX 时应该提示错误。
    - [issue/25448](https://go.dev/issue/25448) 提案：将`panic(nil)`改为非空的panic值。
 
-​
+
 
 #### atomic
 
@@ -987,7 +1053,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
 - [issue/36606](https://go.dev/issue/36606) 提案: cmd/compile: 让64位字段在32位系统上对齐为64位，在结构上添加 `//go:packed`指令
 - [issue/37262](https://go.dev/issue/37262) 运行时：在32位架构上不能原子性地访问 tiny-allocated 结构的第一个字。
 
-​
+
 
 ### time
 
@@ -1010,7 +1076,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
    - [issue/44343](https://go.dev/issue/44343) 运行时：time.Sleep 比预计时间更长
    - [issue/44868](https://go.dev/issue/44868) time, runtime: 零间隔的计时器需要2分钟才能启动。
 
-​
+
 
 ### context
 
@@ -1028,7 +1094,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
 - [doc/context-isnt-for-cancellation](https://dave.cheney.net/2017/08/20/context-isnt-for-cancellation) Dave Cheney，Context 不适用取消。
 - [issue/42564](https://go.dev/issue/42564) context: cancelCtx 独占锁导致极端的竞争。
 
-​
+
 
 ### encoding
 
@@ -1043,7 +1109,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
 - [design/raw-xml](https://go.dev/design/26756-rawxml-token) Sam Whited，提案：原始 XML 令牌，2018年9月1日。
    - [issue/26756](https://go.dev/issue/26756) 提案: encoding/xml: 添加 RawXML 令牌。
 
-​
+
 
 ### image, x/image
 以下的讨论关于颜色管理和图片标准库。现在，Go图片库不会在编码和解码期间读取或写入元信息。因此，在处理图片时（例如在非线性 sRGB 空间中缩放），颜色可能出错。通用解决方案是设计图片元数据API，来识别编码图片文件中的颜色配置文件。
@@ -1061,14 +1127,14 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
 - [issue/44808](https://go.dev/issue/44808) image, image/draw: 添加直接使用 RGBA64 的接口
 - [issue/46395](https://go.dev/issue/46395) image/draw: 如果掩码是 *image.Alpha，通过使用特殊情况来提升性能。
 
-​
+
 
 ### Mobile
 
 - [design/go14android](https://go.dev/s/go14android) David Crawshaw，Go 支持安卓，2014年6月。
 - [design/gobind](https://go.dev/s/gobind) David Crawshaw，绑定Go和Java，2014年7月。
 
-​
+
 
 ### misc
 
@@ -1085,7 +1151,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
 - [design/dns](https://go.dev/design/26160-dns-based-vanity-imports) Sam Whited，提案：基于DNS的虚导入。2018年6月30日。
    - [issue/26160](https://go.dev/issue/26160) 提案：将 DNS 文本记录用于虚导入路径
 
-​
+
 
 ## 未分类但相关的链接
 
@@ -1106,7 +1172,7 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
 - [我想实现的有趣的论文（或者有部分实现）](https://github.com/dgryski/interesting-papers)
 - [golang/wiki/ResearchPapers](https://github.com/golang/go/wiki/ResearchPapers)
 
-​
+
 
 ## 有趣的事实
 
@@ -1116,17 +1182,17 @@ Go 1.16中，对新的 os/fs 包进行了大量返工和改进。
 - [doc/gophercount](https://research.swtch.com/gophercount) 有多少Go开发者？2019年11月1日。
 - [discuss/google-owns-go](https://groups.google.com/forum/#!msg/golang-nuts/6dKNSN0M_kg/Y1yDJRwQBgAJ) Russ Cox 关于“Go是谷歌的语言，不是我们的语言”的回应。
 
-​
+
 
 ## 鸣谢
 首先感谢 [TalkGo](https://github.com/talkgo) 社区创建者 [Mai Yang](https://github.com/yangwenmai) 对 [golang.design](https://golang.design/) 倡议的大力推动。他创建的 TalkGo 极大地改变了中国的 Go 社区。他也是一个伟大的人，积极为各种与 Go 相关的项目作贡献。
-​
+
 
 同样重要的是感谢 TalkGo 社区核心成员 [qcrao](https://github.com/qcrao) 和 [eddycjy](https://github.com/eddycjy) 的持续而鼓舞人心的讨论和分享。
-​
+
 
 如果没有他们的支持，此文档无法完成。
-​
+
 
 ## 凭证
 [golang.design/history](https://github.com/golang-design/history) | CC-BY-NC-ND 4.0 © [changkun](https://changkun.de/)

@@ -8,6 +8,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/yuin/goldmark/parser"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -16,10 +17,19 @@ import (
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
-	"github.com/yuin/goldmark/parser"
 )
 
-var md goldmark.Markdown
+var (
+	md   goldmark.Markdown
+	pctx parser.Context
+)
+
+type data struct {
+	Lang       string
+	Selected   string
+	Navigation template.HTML
+	Content    template.HTML
+}
 
 func init() {
 	md = goldmark.New(
@@ -31,31 +41,35 @@ func init() {
 		// html.WithHardWraps(), // do this someday.
 		),
 	)
+	pctx = parser.NewContext(parser.WithIDs(newIDs()))
 }
 
 func main() {
-	b := readFile("README.md")
+	index := readFile("README.md")
+	cn := readFile("README_zh-Hans.md", parser.WithContext(pctx))
 
-	execute("public/index.html", b)
+	execute("en", "index", index)
+	execute("zh-Hans", "zh-Hans", cn)
+
 	fmt.Println("golang-design/history: A Documentary of Go")
 }
 
-func readFile(filename string) bytes.Buffer {
+func readFile(filename string, opts ...parser.ParseOption) bytes.Buffer {
 	d, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatalf("Read: cannot read README.md, err: %v", err)
 	}
 
 	var b bytes.Buffer
-	err = md.Convert(d, &b)
+	err = md.Convert(d, &b, opts...)
 	if err != nil {
 		log.Fatalf("Convert: cannot convert README from markdown to html, err: %v", err)
 	}
 	return b
 }
 
-func execute(target string, b bytes.Buffer) {
-	f, err := os.Create(target)
+func execute(lang, target string, b bytes.Buffer) {
+	f, err := os.Create("public/" + target + ".html")
 	if err != nil {
 		log.Fatalf("Create: cannot create index.html, err: %v", err)
 	}
@@ -67,19 +81,21 @@ func execute(target string, b bytes.Buffer) {
 	// A better and generic way obviously is to do DOM tree analysis.
 	dom := b.String()
 	tocStart := strings.Index(dom, "<p><strong>Table of Contents</strong></p>")
-	tocEnd := strings.Index(dom, `<h2 id="disclaimer">Disclaimer</h2>`)
+	tocEnd := strings.Index(dom, `<hr>`)
 	toc := dom[tocStart:tocEnd]
 	dom = dom[:tocStart] + `<div class="doc-nav-mobile">` +
 		dom[tocStart:tocEnd] + `</div>` + dom[tocEnd:]
 	dom = strings.ReplaceAll(dom, `<p><a href="#top">Back To Top</a></p>`, "")
 
-	type data struct {
-		Navigation template.HTML
-		Content    template.HTML
-	}
+	tmpl := template.Must(template.New(target).Parse(indexTemplate))
 
-	tmpl := template.Must(template.New("index").Parse(indexTemplate))
+	var selected string
+	if "en" != lang {
+		selected = "selected"
+	}
 	tmpl.Execute(f, data{
+		Lang:       lang,
+		Selected:   selected,
 		Navigation: template.HTML(toc),
 		Content:    template.HTML(dom),
 	})
@@ -87,7 +103,7 @@ func execute(target string, b bytes.Buffer) {
 
 const indexTemplate = `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{.Lang}}">
 <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80889616-4"></script>
@@ -108,8 +124,8 @@ const indexTemplate = `
 	<div class="col-3 dark-switch">
 		<label>
    			<select Onchange="window.open(this.options[this.selectedIndex].value,target='_self')">
-	 		<option selected value="index.html">English</option>
-	 		<option value="dark.js">简体中文</option>
+	 		<option value="index.html">English</option>
+	 		<option {{.Selected}} value="zh-Hans.html">简体中文</option>
       		</select>
 		</label>
     </div>
