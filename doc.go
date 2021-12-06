@@ -92,7 +92,7 @@ func parseTemplate(lang, target string, b bytes.Buffer) {
 	tmpl := template.Must(template.New(target).Parse(indexTemplate))
 
 	var selected string
-	if "en" != lang {
+	if "index" != target {
 		selected = "selected"
 	}
 	tmpl.Execute(f, data{
